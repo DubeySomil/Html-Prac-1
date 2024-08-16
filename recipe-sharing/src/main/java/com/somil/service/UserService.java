@@ -1,5 +1,7 @@
 package com.somil.service;
 
-public class UserService {
+import com.somil.models.User;
 
+public interface UserService {
+    public User findUserById(Long id) throws Exception;
 }

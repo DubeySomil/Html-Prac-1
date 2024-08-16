@@ -1,6 +1,8 @@
 package com.somil.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -8,7 +10,9 @@ import com.somil.models.Recipe;
 import com.somil.models.User;
 import com.somil.repository.RecipeRepo;
 import com.somil.service.RecipeService;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RecipeServiceImpl implements RecipeService{
     
     @Autowired
@@ -16,38 +20,62 @@ public class RecipeServiceImpl implements RecipeService{
 
     @Override
     public Recipe createRecipe(Recipe recipe, User user) {
-        
-        return null;
+        Recipe createdRecipe = new Recipe();
+        createdRecipe.setTitle(recipe.getTitle());
+        createdRecipe.setImage(recipe.getImage());
+        createdRecipe.setUser(recipe.getUser());
+        createdRecipe.setDescription(recipe.getDescription());
+        createdRecipe.setCreatedAt(LocalDateTime.now());
+        return recipeRepo.save(createdRecipe);
     }
 
     @Override
     public Recipe findRecipeById(Long id) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+        //Optional is returned so maybe recipe will exist or maybe it will not.
+        Optional<Recipe> recipeOpt = recipeRepo.findById(id);
+        if(recipeOpt.isPresent()) {            
+            return recipeOpt.get();
+        }else {
+            throw  new Exception("Recipe not found with id : " + id);
+        }
     }
 
     @Override
-    public Recipe deleteRecipe(Long id) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+    public void deleteRecipe(Long id) throws Exception {
+        findRecipeById(id);
+        recipeRepo.deleteById(id);
     }
 
     @Override
     public Recipe updateRecipe(Recipe recipe, Long id) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+        Recipe oldRecipe = findRecipeById(id);
+
+        if (recipe.getTitle() !=null) {
+            oldRecipe.setTitle (recipe.getTitle());
+        }
+        if (recipe.getImage() !=null) {
+            oldRecipe.setImage (recipe.getImage() );
+        }
+        if (recipe.getDescription () !=null) {
+            oldRecipe.setDescription (recipe.getDescription());
+        }
+        return recipeRepo.save(oldRecipe);
     }
 
     @Override
     public List<Recipe> getAllRecipe() {
-        // TODO Auto-generated method stub
-        return null;
+        return recipeRepo.findAll();
     }
 
     @Override
-    public Recipe likeRecipe(Long recipeId, Long userId) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+    public Recipe likeRecipe(Long recipeId, User user) throws Exception {
+        Recipe recipe = findRecipeById(recipeId);
+        if(recipe.getLikes().contains(user.getId())){
+            recipe.getLikes().remove(user.getId());
+        }else{
+            recipe.getLikes().add(user.getId());
+        }
+        return recipe;
     }
 
 }

@@ -11,11 +11,11 @@ public interface RecipeService {
     
     public Recipe findRecipeById(Long id) throws Exception;
     
-    public Recipe deleteRecipe(Long id) throws Exception;
+    public void deleteRecipe(Long id) throws Exception;
     
     public Recipe updateRecipe(Recipe recipe, Long id) throws Exception;
     
     public List<Recipe> getAllRecipe();
     
-    public Recipe likeRecipe(Long recipeId, Long userId) throws Exception;
+    public Recipe likeRecipe(Long recipeId, User user) throws Exception;
 }
